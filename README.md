@@ -1,1 +1,1 @@
-# boutique-php-v2
+http://localhost/boutique-php-v2/
