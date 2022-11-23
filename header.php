@@ -20,7 +20,7 @@ require("functions.php");
 
 <header class="container-fluid position-fixed top-0 p-0" style="z-index: 1">
     <nav class="navbar navbar-expand-lg bg-light">
-        <div class="container">
+        <div class="container d-flex flex-column">
 
             <a class="navbar-brand mx-auto px-5 text-center" href="index.php" style="max-width: 100vw;">
                 <h1 style="font-family: Rubik beastly, arial, serif; font-size: 2rem;">Arbr'à'chadabra</h1>
@@ -32,7 +32,7 @@ require("functions.php");
             </button>
 
             <div class="collapse navbar-collapse text-center" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <ul class="navbar-nav me-5">
                     <li class="nav-item m-3">
                         <a class="nav-link activems-4" aria-current="page" href="index.php">Accueil</a>
                     </li>
@@ -40,11 +40,11 @@ require("functions.php");
                         <a class="nav-link" href="produits.php">Produits</a>
                     </li>
                 </ul>
-                <button type="button" class="btn btn-secondary btn-lg m-2"><a href="panier.php"><i class="fa-solid fa-cart-shopping text-white"></i></a></button>
-                <button type="button" class="btn btn-secondary btn-lg m-2"><a href="panier.php"><i class="fa-solid fa-user text-white"></i></a></button>
+                <button type="button" class="btn btn-secondary btn-lg ms-3 me-2"><a href="panier.php"><i class="fa-solid fa-cart-shopping text-white"></i></a></button>
+                <button type="button" class="btn btn-secondary btn-lg ms-4"><a href="connexion.php"><i class="fa-solid fa-user text-white"></i></a></button>
             </div>
         </div>
     </nav>
 </header>
 
-<body class="w-100" style="margin: 200px 0 100px 0; background-image: url(images/bg_chat_colo.jpg); font-family: Athiti, arial, serif;">
+<body class="w-100" style="margin: 200px 0 100px 0; background-image: url(images/bg_chat2.jpg); background-size: auto 100%; background-repeat: no-repeat; background-position: center; font-family: Athiti, arial, serif;">
