@@ -47,4 +47,4 @@ require("functions.php");
     </nav>
 </header>
 
-<body style="margin: 200px 0 100px 0; background-image: url(images/bg_chat_colo.jpg); background-size: cover; background-repeat: no-repeat; font-family: Athiti, arial, serif; height: 100vh;">
+<body class="w-100" style="margin: 200px 0 100px 0; background-image: url(images/bg_chat_colo.jpg); font-family: Athiti, arial, serif;">
