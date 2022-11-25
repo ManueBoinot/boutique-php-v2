@@ -1,11 +1,13 @@
 <?php
 require_once("header.php");
 
-// Import de la BDD complète --------------------------------------
-$afficherArticles = 'SELECT * FROM articles';
-$listeArticles = $db->prepare($afficherArticles);
-$listeArticles->execute();
-$articles = $listeArticles->fetchAll();
+$articles = getArticles();
+
+// Vider le panier  -------------------------
+if (isset($_POST['resetCart'])) {
+    resetCart();
+}
+
 ?>
 
 <section id="section-index" class="container text-center">

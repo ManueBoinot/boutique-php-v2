@@ -1,4 +1,3 @@
-
 </body>
 
 <footer class="container-fluid text-center bg-light p-2 position-fixed bottom-0">
