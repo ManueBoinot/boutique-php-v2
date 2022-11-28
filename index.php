@@ -11,7 +11,9 @@ if (isset($_POST['resetCart'])) {
 ?>
 
 <section id="section-index" class="container text-center">
+
     <div class="row">
+    <h1 class="fw-bold text-white m-5">Bienvenue sur notre site !</h1>
         <?php
         // Insertion des cards ARTICLES --------------------------------------
         foreach ($articles as $article) {

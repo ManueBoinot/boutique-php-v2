@@ -45,6 +45,22 @@ return $listeArticles->fetchAll();
 }
 $articles = getArticles();
 
+// ------------------------------------------------------------------------------
+// FONCTIONS PAGE INSCRIPTION --------------------------------------
+
+function verifyEmail()
+{
+    $db = getConnection();
+    $query = $db->prepare('SELECT * FROM clients WHERE email = ?');
+    $query->execute([$_POST['email']]);
+    return $query->fetch();
+}
+
+
+
+// ------------------------------------------------------------------------------
+// FONCTIONS PAGE PRODUITS --------------------------------------
+
 // Import des GAMMES --------------------------------------
 function getGammes()
 {
@@ -54,9 +70,8 @@ $listeArticles = $db->prepare($afficherArticles);
 $listeArticles->execute();
 return $listeArticles->fetchAll();
 }
-$gammes = getGammes();
 
-// Import des articles selon leur GAMME --------------------------------------
+// Sélection des ARTICLES par leur id de GAMME --------------------------------------
 function getArticlesFromGammes($idGamme)
 {
     $db = getConnection();
@@ -65,6 +80,7 @@ function getArticlesFromGammes($idGamme)
     return $query->fetchAll();
 }
 
+// Affichage des articles selon leur GAMME --------------------------------------
 function showArticles($articles)
 {
     foreach ($articles as $article) {
@@ -120,14 +136,6 @@ function showArticles($articles)
     }
 }
 
-function verifyEmail()
-{
-    $db = getConnection();
-    $query = $db->prepare('SELECT * FROM clients WHERE email = ?');
-    $query->execute([$_POST['email']]);
-    return $query->fetch();
-}
-
 // Sélectionner les informations d'un produit -------------------------
 function getArticleFromId($idArticle)
 {
@@ -137,6 +145,10 @@ function getArticleFromId($idArticle)
         }
     }
 }
+
+
+// ------------------------------------------------------------------------------
+// FONCTIONS PAGE PANIER --------------------------------------
 
 // Ajouter un produit au panier -------------------------
 function addArticleToCart($article)
@@ -208,7 +220,6 @@ function totalPanier()
     return $total;
 }
 
-
 // Calculer le total des frais de port -------------------------
 function totalPort()
 {
@@ -219,7 +230,6 @@ function totalPort()
     }
     return $total;
 }
-
 
 // Calculer le total de la commande (produits + frais de port) -------------------------
 function totalCommande()

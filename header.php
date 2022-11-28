@@ -23,7 +23,7 @@ require("functions.php");
         <div class="container d-flex flex-column">
 
             <a class="navbar-brand mx-auto px-5 text-center" href="index.php" style="max-width: 100vw;">
-                <h1 style="font-family: Rubik beastly, arial, serif; font-size: 2rem; color: darksalmon;">Arbr'à'chadabra</h1>
+                <h1 style="font-family: Rubik beastly, arial, serif; font-size: 3rem; color: #AB6A39;">Arbr'à'chadabra</h1>
                 <h2 class="fst-italic" style="font-size: 1rem;">Création de mobilier pour animaux</h2>
             </a>
 
@@ -40,8 +40,8 @@ require("functions.php");
                         <a class="nav-link" href="gammes.php">Produits</a>
                     </li>
                 </ul>
-                <button type="button" class="btn btn-secondary btn-lg ms-3 me-2 border-0" style="background-color: darksalmon;"><a href="panier.php"><i class="fa-solid fa-cart-shopping text-white"></i></a></button>
-                <button type="button" class="btn btn-secondary btn-lg ms-4 border-0" style="background-color: darksalmon;"><a href="connexion.php"><i class="fa-solid fa-user text-white"></i></a></button>
+                <button type="button" class="btn btn-secondary btn-lg ms-5 me-2 border-0" style="background-color: darksalmon;"><a href="panier.php"><i class="fa-solid fa-cart-shopping text-white"></i></a></button>
+                <button type="button" class="btn btn-outline-secondary btn-lg ms-5" style="border-color: darksalmon;"><a href="connexion.php"><i class="fa-solid fa-user" style="color: darksalmon;"></i></a></button>
             </div>
         </div>
     </nav>
