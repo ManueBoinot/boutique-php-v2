@@ -37,7 +37,7 @@ require("functions.php");
                         <a class="nav-link activems-4" aria-current="page" href="index.php">Accueil</a>
                     </li>
                     <li class="nav-item m-3">
-                        <a class="nav-link" href="produits.php">Produits</a>
+                        <a class="nav-link" href="gammes.php">Produits</a>
                     </li>
                 </ul>
                 <button type="button" class="btn btn-secondary btn-lg ms-3 me-2 border-0" style="background-color: darksalmon;"><a href="panier.php"><i class="fa-solid fa-cart-shopping text-white"></i></a></button>

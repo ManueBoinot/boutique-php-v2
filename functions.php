@@ -10,14 +10,14 @@ try {
         'mysql:host=localhost;dbname=boutique_en_ligne;charset=utf8',
         'manue',
         'Re04glisse0833!',
-        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC)
+        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC)
     );
 } catch (Exception $e) {
     die('Erreur : ' . $e->getMessage());
 }
 return $db;
 }
-
+$db = getConnection();
 // Création de la session --------------------------------------
 session_start();
 
@@ -43,6 +43,7 @@ $listeArticles = $db->prepare($afficherArticles);
 $listeArticles->execute();
 return $listeArticles->fetchAll();
 }
+$articles = getArticles();
 
 // Import des GAMMES --------------------------------------
 function getGammes()
@@ -53,17 +54,78 @@ $listeArticles = $db->prepare($afficherArticles);
 $listeArticles->execute();
 return $listeArticles->fetchAll();
 }
-
 $gammes = getGammes();
 
 // Import des articles selon leur GAMME --------------------------------------
-function getArticlesByGamme($idGammes)
+function getArticlesFromGammes($idGamme)
 {
-$db = getConnection();
-$afficherArticles = 'SELECT id FROM articles';
-$listeArticles = $db->prepare($afficherArticles);
-$listeArticles->execute();
-return $listeArticles->fetchAll();
+    $db = getConnection();
+    $query = $db->prepare('SELECT * FROM articles WHERE id_gamme = ?');
+    $query->execute([$idGamme]);
+    return $query->fetchAll();
+}
+
+function showArticles($articles)
+{
+    foreach ($articles as $article) {
+        echo "<div class=\"col-md-6 d-flex justify-content-center my-3\">
+        <div class=\"card text-center\" style=\"max-width: 540px; box-shadow: 0 0 15px grey;\">
+            <div class=\"row g-0\">
+                <div class=\"col-md-5\">
+                    <img src=\"" . $article['image'] . "\" class=\"img-fluid rounded-start\" style=\"height: 100%; object-fit: cover;\" alt=\"photo arbre à chat " . $article['nom'] . " ?>\">
+                </div>
+                <div class=\"col-md-7 my-auto\">
+                    <div class=\"card-body\" style=\"min-width: 180px;\">
+                        <h5 class=\"card-title fw-bold text-uppercase\">".  $article['nom'] . "</h5>
+                        <p class=\"card-text\"" . $article['description'] . " ?></p>
+                        <p class=\"card-text\">" . $article['prix'] . " €</p>
+                        <!-- Button trigger modal -->
+                        <button type=\"button\" class=\"btn btn-outline-secondary m-2\" data-bs-toggle=\"modal\" data-bs-target=\"#detailArticle".  $article['id'] . "\" style=\"background-color: white; border-color: darksalmon; color: darksalmon;\">Détails</button>
+                        <!-- Modal -->
+                        <div class=\"modal fade\" id=\"detailArticle" .  $article['id'] . "\" tabindex=\"-1\" aria-labelledby=\"detailArticleTitre\" aria-hidden=\"true\">
+                            <div class=\"modal-dialog\">
+                                <div class=\"modal-content\">
+                                    <div class=\"card text-center\" style=\"box-shadow: 0 0 15px grey; max-height: 90vh;\">
+                                        <div class=\"row\">
+                                            <div class=\"col-md-12\">
+                                                <img src=\" " . $article['image'] . " \" class=\"img-fluid rounded-start m-3\" style=\"min-height: 300px; max-height: 50vh; min-width: 200px;\" alt=\"photo arbre à chat " .  $article['nom'] . "\">
+                                            </div>
+                                            <div class=\"col-md my-auto\">
+                                                <div class=\"card-body m-3\">
+                                                    <h5 class=\"card-title fw-bold text-uppercase\"> " . $article['nom'] . "</h5>
+                                                    <p class=\"card-text\"> " . $article['description'] . "</p>
+                                                    <p class=\"card-text\"> " . $article['description_detaillee'] . "</p>
+                                                    <p class=\"card-text\"> " . $article['prix'] . " €</p>
+                                                    <!-- Ajout au panier -->
+                                                    <form action=\"panier.php\" method=\"post\">
+                                                        <input type=\"hidden\" name=\"chosenArticle\" value=\" " . $article['id'] . "\">
+                                                        <button type=\"submit\" class=\"btn btn-secondary border-0 m-1\" style=\"background-color: darksalmon;\"><i class=\"fa-solid fa-cart-plus text-white\"></i></button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form action=\"panier.php\" method=\"post\">
+                            <input type=\"hidden\" name=\"chosenArticle\" value=\" " . $article['id'] . "\">
+                            <button type=\"submit\" class=\"btn btn-secondary border-0 m-1\" style=\"background-color: darksalmon;\"><i class=\"fa-solid fa-cart-plus text-white\"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>";
+    }
+}
+
+function verifyEmail()
+{
+    $db = getConnection();
+    $query = $db->prepare('SELECT * FROM clients WHERE email = ?');
+    $query->execute([$_POST['email']]);
+    return $query->fetch();
 }
 
 // Sélectionner les informations d'un produit -------------------------
