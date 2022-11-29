@@ -1,0 +1,7 @@
+{
+    "html.hover.documentation": true,
+    "css.hover.documentation": true,
+    "less.hover.documentation": true,
+    "scss.hover.documentation": true,
+    "js/ts.implicitProjectConfig.experimentalDecorators": true
+}
