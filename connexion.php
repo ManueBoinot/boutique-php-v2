@@ -5,7 +5,6 @@ if (isset($_POST['nom']))
 {
     inscription();
 }
-
 ?>
 
 <section class="section-connexion container mx-auto p-3">
@@ -19,14 +18,14 @@ if (isset($_POST['nom']))
             <h2 class="text-center p-3">Se connecter</h2>
                 <div class="row my-3 px-5">
                     <label for="inputEmail" class="form-label">Email</label>
-                    <input type="email" name="login" class="form-control" id="inputEmail">
+                    <input type="email" name="email" class="form-control" id="inputEmail" required>
                 </div>
                 <div class="row my-3 px-5">
                     <label for="inputMdp" class="form-label">Mot de passe</label>
-                    <input type="password" name="mdp" class="form-control" id="inputMdp">
+                    <input type="password" name="mdp" class="form-control" id="inputMdp" required>
                 </div>
                 <div class="row my-3 px-5">
-                    <button type="submit" name="connexion" class="col-4 offset-4 btn btn-outline-primary fw-bold" style="border-color: darksalmon;"><a href="profil.php" class="text-decoration-none" style="color: darksalmon;">Se connecter</a></button>
+                    <button type="submit" class="col-4 offset-4 btn btn-outline-primary fw-bold text-white border-0" style="background-color: darksalmon;">Se connecter</button>
                 </div>
             </form>
         </div>

@@ -5,17 +5,17 @@
 // Connexion à la BDD --------------------------------------
 function getConnection()
 {
-try {
-    $db = new PDO(
-        'mysql:host=localhost;dbname=boutique_en_ligne;charset=utf8',
-        'manue',
-        'Re04glisse0833!',
-        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC)
-    );
-} catch (Exception $e) {
-    die('Erreur : ' . $e->getMessage());
-}
-return $db;
+    try {
+        $db = new PDO(
+            'mysql:host=localhost;dbname=boutique_en_ligne;charset=utf8',
+            'manue',
+            'Re04glisse0833!',
+            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC)
+        );
+    } catch (Exception $e) {
+        die('Erreur : ' . $e->getMessage());
+    }
+    return $db;
 }
 $db = getConnection();
 
@@ -29,28 +29,29 @@ $date = 'now';
 // Création du panier s'il n'existe pas déjà --------------------------------------
 function createCart()
 {
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = array();
-}
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = array();
+    }
 }
 createCart();
 
 // Import de la BDD complète --------------------------------------
 function getArticles()
 {
-$db = getConnection();
-$afficherArticles = 'SELECT * FROM articles';
-$listeArticles = $db->prepare($afficherArticles);
-$listeArticles->execute();
-return $listeArticles->fetchAll();
+    $db = getConnection();
+    $afficherArticles = 'SELECT * FROM articles';
+    $listeArticles = $db->prepare($afficherArticles);
+    $listeArticles->execute();
+    return $listeArticles->fetchAll();
 }
 $articles = getArticles();
 
 
 
 // ------------------------------------------------------------------------------
-// FONCTIONS PAGE INSCRIPTION --------------------------------------
+// FONCTIONS UTILISATEURS --------------------------------------
 
+// Vérification existence email dans BDD --------------------------------------
 function verifyEmail()
 {
     $db = getConnection();
@@ -59,6 +60,7 @@ function verifyEmail()
     return $query->fetch();
 }
 
+// Vérification de la longueur des champs du formulaire d'inscription ------------
 function checkInputsLength()
 {
     $inputsLengthOk = true;
@@ -67,29 +69,30 @@ function checkInputsLength()
         $inputsLengthOk = false;
     }
 
-    if (strlen($_POST['prenom']) > 25 || strlen($_POST['prenom']) < 3) {
-        $inputsLengthOk = false;
-    }
+        if (strlen($_POST['prenom']) > 25 || strlen($_POST['prenom']) < 3) {
+            $inputsLengthOk = false;
+        }
 
-    if (strlen($_POST['email']) > 25 || strlen($_POST['email']) < 5) {
-        $inputsLengthOk = false;
-    }
+            if (strlen($_POST['email']) > 25 || strlen($_POST['email']) < 5) {
+                $inputsLengthOk = false;
+            }
 
-    if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 5) {
-        $inputsLengthOk = false;
-    }
+                if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 5) {
+                    $inputsLengthOk = false;
+                }
 
-    if (strlen($_POST['cp']) !== 5) {
-        $inputsLengthOk = false;
-    }
+                    if (strlen($_POST['cp']) !== 5) {
+                        $inputsLengthOk = false;
+                    }
 
-    if (strlen($_POST['ville']) > 25 || strlen($_POST['ville']) < 3) {
-        $inputsLengthOk = false;
-    }
+                        if (strlen($_POST['ville']) > 25 || strlen($_POST['ville']) < 3) {
+                            $inputsLengthOk = false;
+                        }
 
-    return $inputsLengthOk;
+                        return $inputsLengthOk;
 }
 
+// Vérification de champs vides --------------------------------------
 function checkEmptyFields()
 {
     foreach ($_POST as $field) {
@@ -100,55 +103,111 @@ function checkEmptyFields()
     return false;
 }
 
-function checkPassword($mdp)    { 
+// Validation de la casse du MdP --------------------------------------
+function checkPassword($mdp)
+{
     // minimum 8 caractères et maximum 15, minimum 1 lettre, 1 chiffre et 1 caractère spécial
-        $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%*?/&])(?=\S+$).{8,15}$^";
-        return preg_match($regex, $mdp);
-    }
-    
+    $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%*?/&])(?=\S+$).{8,15}$^";
+    return preg_match($regex, $mdp);
+}
 
+// Fonction d'inscription --------------------------------------
 function inscription()
 {
+    $db = getConnection();
 
-    $db = getConnection(); 
-
-    if (checkEmptyFields()) { 
+    if (checkEmptyFields()) {
         echo "<script>alert('Compléter les champs vides')</script>";
     } else {
 
-        if (checkInputsLength() == false) { 
+        if (checkInputsLength() == false) {
             echo "<script>alert('Longueur incorrecte d'un ou plusieurs champs')</script>";
         } else {
 
-            if (verifyEmail($_POST['email'])) { 
+            if (verifyEmail($_POST['email'])) {
                 echo "<script>alert('Adresse email déjà utilisée')</script>";
-            } 
+            } else {
+
+                if (!checkPassword($_POST['mdp'])) {
+                    echo "<script>alert('Votre mot de passe ne correspond pas aux critères attendus')</script>";
+                } else {
+
+                    $sqlQuery = "INSERT INTO clients(nom, prenom, email, mdp) VALUES (:nom, :prenom, :email, :mdp)";
+                    $insertNewUser = $db->prepare($sqlQuery);
+                    $insertNewUser->execute([
+                        'nom' => $_POST['nom'],
+                        'prenom' => $_POST['prenom'],
+                        'email' => $_POST['email'],
+                        'mdp' => password_hash($_POST['mdp'], PASSWORD_DEFAULT),
+                    ]);
+
+                    $id = $db->lastInsertId();
+
+                    $sqlQuery2 = "INSERT INTO adresses( id_client, adresse, cp, ville) VALUES (:id_client, :adresse, :cp, :ville)";
+                    $insertNewAdresse = $db->prepare($sqlQuery2);
+                    $insertNewAdresse->execute([
+                        'id_client' => $id,
+                        'adresse' => $_POST['adresse'],
+                        'cp' => $_POST['cp'],
+                        'ville' => $_POST['ville'],
+                    ]);
+
+                    echo "<script>alert('Votre inscription s'est déroulée avec succès !')</script>";
+                }
+            }
         }
-}
-        
-        $sqlQuery = "INSERT INTO clients(nom, prenom, email, mdp) VALUES (:nom, :prenom, :email, :mdp)";
-        $insertNewUser = $db->prepare($sqlQuery);
-        $insertNewUser->execute([
-            'nom' => $_POST['nom'],
-            'prenom' => $_POST['prenom'],
-            'email' => $_POST['email'],
-            'mdp' => password_hash($_POST['mdp'], PASSWORD_DEFAULT),
-        ]);
-
-        $id = $db->lastInsertId();
-
-        $sqlQuery2 = "INSERT INTO adresses( id_client, adresse, cp, ville) VALUES (:id_client, :adresse, :cp, :ville)";
-        $insertNewAdresse = $db->prepare($sqlQuery2);
-        $insertNewAdresse->execute([
-            'id_client'=> $id,
-            'adresse' => $_POST['adresse'],
-            'cp' => $_POST['cp'],
-            'ville' => $_POST['ville'],
-        ]);
-
-        echo "<script>alert('Votre inscription s'est déroulée avec succès !'</script>";
     }
+}
 
+// Import de l'adresse liée au client --------------------------------------
+function getAdresse()
+{
+    $db = getConnection();
+    $query = $db->prepare('SELECT * FROM adresses WHERE id_client = ?');
+    $query->execute([$_SESSION['id']]);
+    return $query->fetch();
+}
+
+// Fonction de connexion à l'espace personne--------------------------------------
+function connection()
+{
+    // On vérifie qu'il n'y a pas de champs vides --------------------------------------
+    if (checkEmptyFields()) {
+        echo "<script>alert('Compléter les champs vides')</script>";
+    } else {
+
+        // On nomme le mail fourni par la personne qui souhaite se connecter ------------------------
+        $client = verifyEmail($_POST['email']);
+
+        // On vérifie que l'adresse email existe --------------------------------------
+        if (empty($client)) {
+            // LE MESSAGE NE S'AFFICHE PAS !!!!!
+            echo "<script>alert('Cette adresse email n'existe pas !')</script>";
+        } else {
+
+            // On vérifie que le mot de passe correspond --------------------------------------
+            if (!password_verify($_POST['mdp'], $client['mdp'])) {
+                echo "<script>alert('Mot de passe erroné !')</script>";
+
+            // Si toutes les validations sont OK alors on stocke les infos dans la SESSION ---------------
+            } else {
+    
+                $_SESSION['id'] = $client['id'];
+                $_SESSION['nom'] = $client['nom'];
+                $_SESSION['prenom'] = $client['prenom'];
+                $_SESSION['email'] = $client['email'];
+
+                $adresse = getAdresse();
+
+                $_SESSION['adresse'] = $adresse['adresse'];
+                $_SESSION['cp'] = $adresse['cp'];
+                $_SESSION['ville'] = $adresse['ville'];
+
+                echo "<script>alert('Vous êtes bien connecté(e) !')</script>";
+            }
+        }
+    }
+}
 
 // ------------------------------------------------------------------------------
 // FONCTIONS PAGE PRODUITS --------------------------------------
@@ -156,11 +215,11 @@ function inscription()
 // Import des GAMMES --------------------------------------
 function getGammes()
 {
-$db = getConnection();
-$afficherArticles = 'SELECT * FROM gammes';
-$listeArticles = $db->prepare($afficherArticles);
-$listeArticles->execute();
-return $listeArticles->fetchAll();
+    $db = getConnection();
+    $afficherArticles = 'SELECT * FROM gammes';
+    $listeArticles = $db->prepare($afficherArticles);
+    $listeArticles->execute();
+    return $listeArticles->fetchAll();
 }
 
 // Sélection des ARTICLES par leur id de GAMME --------------------------------------
@@ -184,11 +243,11 @@ function showArticles($articles)
                 </div>
                 <div class=\"col-md-7 my-auto\">
                     <div class=\"card-body\" style=\"min-width: 180px;\">
-                        <h5 class=\"card-title fw-bold text-uppercase\">".  $article['nom'] . "</h5>
+                        <h5 class=\"card-title fw-bold text-uppercase\">" .  $article['nom'] . "</h5>
                         <p class=\"card-text\"" . $article['description'] . " ?></p>
                         <p class=\"card-text\">" . $article['prix'] . " €</p>
                         <!-- Button trigger modal -->
-                        <button type=\"button\" class=\"btn btn-outline-secondary m-2\" data-bs-toggle=\"modal\" data-bs-target=\"#detailArticle".  $article['id'] . "\" style=\"background-color: white; border-color: darksalmon; color: darksalmon;\">Détails</button>
+                        <button type=\"button\" class=\"btn btn-outline-secondary m-2\" data-bs-toggle=\"modal\" data-bs-target=\"#detailArticle" .  $article['id'] . "\" style=\"background-color: white; border-color: darksalmon; color: darksalmon;\">Détails</button>
                         <!-- Modal -->
                         <div class=\"modal fade\" id=\"detailArticle" .  $article['id'] . "\" tabindex=\"-1\" aria-labelledby=\"detailArticleTitre\" aria-hidden=\"true\">
                             <div class=\"modal-dialog\">

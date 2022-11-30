@@ -4,11 +4,14 @@ require_once("header.php");
 
 <section class="section-inscription container mx-auto p-3">
     <div class="row p-5" style="background-color: rgba(255,255,255,0.7);">
+
+        <!-- TITRE FORMULAIRE D'INSCRIPTION -->
         <div class="row text-center pb-3">
             <h1 class="fw-bold">CRÉATION D'UN ESPACE PERSONNEL</h1>
             <h2 class="fs-4">Merci de compléter le formulaire ci-dessous :</h2>
         </div>
-        <!-- FORMULAIRE D'INSCRIPTION -->
+
+        <!-- CHAMPS FORMULAIRE D'INSCRIPTION -->
         <div class="row px-5 mx-auto">
             <form action="connexion.php" method="post" class="row bg-light border p-5 gap-2">
                 <div class="row">
@@ -50,13 +53,13 @@ require_once("header.php");
                         <input type="text" name="ville" class="form-control" id="inputVille" required>
                     </div>
                 </div>
+
+                <!-- BOUTON ENVOI FORMULAIRE D'INSCRIPTION -->
                 <div class="row m-3 w-75 mx-auto">
                     <button type="submit" class="btn btn-primary btn-lg border-0 fw-bold" style="background-color: darksalmon;">Créer mon compte</button>
                 </div>
             </form>
         </div>
-
-
     </div>
 </section>
 

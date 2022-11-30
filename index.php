@@ -8,17 +8,23 @@ if (isset($_POST['resetCart'])) {
     resetCart();
 }
 
+// Vider le panier  -------------------------
+if (isset($_POST['deconnexion'])) {
+    $_SESSION = [];
+}
 ?>
 
 <section id="section-index" class="container text-center">
 
     <div class="row">
-    <h1 class="fw-bold text-white m-5">Bienvenue sur notre site !</h1>
+
+        <!-- TITRE ACCUEIL -->
+        <h1 class="fw-bold text-white m-5">Bienvenue sur notre site !</h1>
         <?php
+
         // Insertion des cards ARTICLES --------------------------------------
         foreach ($articles as $article) {
         ?>
-
             <div class="col-md-6 d-flex justify-content-center my-3">
                 <div class="card text-center" style="max-width: 540px; box-shadow: 0 0 15px grey;">
                     <div class="row g-0">
@@ -35,7 +41,6 @@ if (isset($_POST['resetCart'])) {
                     </div>
                 </div>
             </div>
-
         <?php
         }
         ?>
