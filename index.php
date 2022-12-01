@@ -35,7 +35,7 @@ if (isset($_POST['deconnexion'])) {
                             <div class="card-body">
                                 <h5 class="card-title fw-bold text-uppercase"><?php echo $article['nom']; ?></h5>
                                 <p class="card-text"><?php echo $article['description']; ?></p>
-                                <button type="button" class="btn btn-secondary border-0" style="background-color: darksalmon;"><a class="text-white text-decoration-none" href="produits.php">+ d'info</a></button>
+                                <button type="button" class="btn btn-secondary border-0" style="background-color: darksalmon;"><a class="text-white text-decoration-none" href="gammes.php">+ d'info</a></button>
                             </div>
                         </div>
                     </div>

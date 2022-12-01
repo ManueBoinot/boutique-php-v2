@@ -52,11 +52,12 @@ $articles = getArticles();
 // FONCTIONS UTILISATEURS --------------------------------------
 
 // Vérification existence email dans BDD --------------------------------------
-function verifyEmail()
+
+function verifyEmail($email)
 {
     $db = getConnection();
     $query = $db->prepare('SELECT * FROM clients WHERE email = ?');
-    $query->execute([$_POST['email']]);
+    $query->execute([$email]);
     return $query->fetch();
 }
 
@@ -65,31 +66,43 @@ function checkInputsLength()
 {
     $inputsLengthOk = true;
 
-    if (strlen($_POST['nom']) > 25 || strlen($_POST['nom']) < 3) {
-        $inputsLengthOk = false;
+    if (isset($_POST['nom'])) {
+        if (strlen($_POST['nom']) > 25 || strlen($_POST['nom']) < 3) {
+            $inputsLengthOk = false;
+        }
     }
 
+    if (isset($_POST['prenom'])) {
         if (strlen($_POST['prenom']) > 25 || strlen($_POST['prenom']) < 3) {
             $inputsLengthOk = false;
         }
+    }
 
-            if (strlen($_POST['email']) > 25 || strlen($_POST['email']) < 5) {
-                $inputsLengthOk = false;
-            }
+    if (isset($_POST['email'])) {
+        if (strlen($_POST['email']) > 40 || strlen($_POST['email']) < 5) {
+            $inputsLengthOk = false;
+        }
+    }
 
-                if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 5) {
-                    $inputsLengthOk = false;
-                }
+    if (isset($_POST['adresse'])) {
+        if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 5) {
+            $inputsLengthOk = false;
+        }
+    }
 
-                    if (strlen($_POST['cp']) !== 5) {
-                        $inputsLengthOk = false;
-                    }
+    if (isset($_POST['cp'])) {
+        if (strlen($_POST['cp']) !== 5) {
+            $inputsLengthOk = false;
+        }
+    }
 
-                        if (strlen($_POST['ville']) > 25 || strlen($_POST['ville']) < 3) {
-                            $inputsLengthOk = false;
-                        }
+    if (isset($_POST['ville'])) {
+        if (strlen($_POST['ville']) > 25 || strlen($_POST['ville']) < 3) {
+            $inputsLengthOk = false;
+        }
+    }
 
-                        return $inputsLengthOk;
+    return $inputsLengthOk;
 }
 
 // Vérification de champs vides --------------------------------------
@@ -114,9 +127,11 @@ function checkPassword($mdp)
 // Fonction d'inscription --------------------------------------
 function inscription()
 {
+
     $db = getConnection();
 
     if (checkEmptyFields()) {
+
         echo "<script>alert('Compléter les champs vides')</script>";
     } else {
 
@@ -168,7 +183,7 @@ function getAdresse()
     return $query->fetch();
 }
 
-// Fonction de connexion à l'espace personne--------------------------------------
+// Fonction de connexion à l'espace personnel --------------------------------------
 function connection()
 {
     // On vérifie qu'il n'y a pas de champs vides --------------------------------------
@@ -189,9 +204,9 @@ function connection()
             if (!password_verify($_POST['mdp'], $client['mdp'])) {
                 echo "<script>alert('Mot de passe erroné !')</script>";
 
-            // Si toutes les validations sont OK alors on stocke les infos dans la SESSION ---------------
+                // Si toutes les validations sont OK alors on stocke les infos dans la SESSION ---------------
             } else {
-    
+
                 $_SESSION['id'] = $client['id'];
                 $_SESSION['nom'] = $client['nom'];
                 $_SESSION['prenom'] = $client['prenom'];
@@ -209,6 +224,127 @@ function connection()
     }
 }
 
+
+// Fonction pour modifier les informations personnelles --------------------------------------
+function modifIdentifiants()
+{
+    $db = getConnection();
+
+    // On vérifie que l'adresse email n'existe pas déjà --------------------------------------
+    if (verifyEmail($_POST['email'])) {
+        echo "<script>alert('Cette adresse email est déjà utilisée !')</script>";
+    } else {
+        // On récupère toutes les infos du client via son email ------------------------
+        $client = verifyEmail($_SESSION['email']);
+
+        // On vérifie que le mot de passe correspond --------------------------------------
+        if (!password_verify($_POST['mdp'], $client['mdp'])) {
+            echo "<script>alert('Mot de passe erroné !')</script>";
+        } else {
+
+            $id = $_SESSION['id'];
+            $nouveauNom = $_POST['nom'] != '' ? $_POST['nom'] : $_SESSION['nom'];
+            $nouveauPrenom = $_POST['prenom'] != '' ? $_POST['prenom'] : $_SESSION['prenom'];
+            $nouvelEmail = $_POST['email'] != '' ? $_POST['email'] : $_SESSION['email'];
+
+            $sqlQuery = "UPDATE clients
+                    SET nom = :nom, prenom = :prenom, email = :email
+                    WHERE id = :id";
+            $updateUser = $db->prepare($sqlQuery);
+            $updateUser->execute([
+                'nom' => $nouveauNom,
+                'prenom' => $nouveauPrenom,
+                'email' => $nouvelEmail,
+                'id' => $id
+            ]);
+
+            $_SESSION['nom'] = $nouveauNom;
+            $_SESSION['prenom'] = $nouveauPrenom;
+            $_SESSION['email'] = $nouvelEmail;
+
+            echo "<script>alert('Les modifications ont bien été prises en compte !')</script>";
+        }
+    }
+}
+
+function modifAdresse()
+{
+    $db = getConnection();
+    // On récupère toutes les infos du client via son email ------------------------
+    $client = verifyEmail($_SESSION['email']);
+
+    // On vérifie que le mot de passe correspond --------------------------------------
+    if (!password_verify($_POST['mdp'], $client['mdp'])) {
+        echo "<script>alert('Mot de passe erroné !')</script>";
+    } else {
+
+        $id = $_SESSION['id'];
+        $nouvelleAdresse = $_POST['adresse'] != '' ? $_POST['adresse'] : $_SESSION['adresse'];
+        $nouveauCp = $_POST['cp'] != '' ? $_POST['cp'] : $_SESSION['cp'];
+        $nouvelleVille = $_POST['ville'] != '' ? $_POST['ville'] : $_SESSION['ville'];
+
+        $sqlQuery2 = "UPDATE adresses
+            SET adresse = :adresse, cp = :cp, ville = :ville
+            WHERE id_client = $id";
+        $updateAdresse = $db->prepare($sqlQuery2);
+        $updateAdresse->execute([
+            'adresse' => $nouvelleAdresse,
+            'cp' => $nouveauCp,
+            'ville' => $nouvelleVille
+        ]);
+
+        $_SESSION['adresse'] = $nouvelleAdresse;
+        $_SESSION['cp'] = $nouveauCp;
+        $_SESSION['ville'] = $nouvelleVille;
+
+        echo "<script>alert('Votre adresse a bien été modifiée !')</script>";
+    }
+}
+
+function modifMdp()
+{
+    $db = getConnection();
+    if (isset($_POST['newPwConfirm'])) {
+
+        // On récupère toutes les infos du client via son email ------------------------
+        $client = verifyEmail($_SESSION['email']);
+
+        if (checkEmptyFields()) {
+            echo "<script>alert('Compléter les champs vides')</script>";
+        } else {
+
+            // On vérifie que le mot de passe actuel correspond --------------------------------------
+            if (!password_verify($_POST['oldPw'], $client['mdp'])) {
+                echo "<script>alert('Mot de passe actuel erroné !')</script>";
+            } else {
+
+                // On vérifie que le nouveau mot de passe est identique aux deux endroits --------------------------------------
+                if (($_POST['newPw'] != $_POST['newPwConfirm'])) {
+                    echo "<script>alert('Les mots de passe ne correspondent pas !')</script>";
+                } else {
+
+                    $nouveauMdp = strip_tags($_POST['newPwConfirm']);
+
+                    // On vérifie que le nouveau mot de passe respecte la casse --------------------------------------
+                    if (!checkPassword($nouveauMdp)) {
+                        echo "<script>alert('Votre mot de passe ne correspond pas aux critères attendus')</script>";
+                    } else {
+
+                        $id = $_SESSION['id'];
+
+                        $sqlQuery = "UPDATE clients SET mdp = :mdp WHERE id = $id";
+                        $updateMdp = $db->prepare($sqlQuery);
+                        $updateMdp->execute([
+                            'mdp' => password_hash($nouveauMdp, PASSWORD_DEFAULT)
+                        ]);
+
+                        echo "<script>alert('Votre mot de passe a bien été modifié !')</script>";
+                    }
+                }
+            }
+        }
+    }
+}
 // ------------------------------------------------------------------------------
 // FONCTIONS PAGE PRODUITS --------------------------------------
 
