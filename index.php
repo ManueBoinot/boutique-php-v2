@@ -5,10 +5,17 @@ $articles = getArticles();
 
 // Vider le panier  -------------------------
 if (isset($_POST['resetCart'])) {
+    saveOrder();
     resetCart();
 }
 
-// Vider le panier  -------------------------
+// Reset panier après commande -------------------------
+if (isset($_POST['newCart'])) {
+    saveOrder();
+    resetCart();
+}
+
+// Reset $_SESSION  -------------------------
 if (isset($_POST['deconnexion'])) {
     $_SESSION = [];
 }

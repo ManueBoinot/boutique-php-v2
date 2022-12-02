@@ -118,6 +118,7 @@ if (isset($_POST['newPwConfirm'])) {
                 </div>
             </form>
 
+
             <!-- Bloc modif MOT DE PASSE -->
             <form action="infos.php" method="post" class="text-start bg-white m-2 p-3 border">
                 <h5 class="fw-bold text-center text-danger mb-3">Modifier votre mot de passe</h5>

@@ -530,3 +530,36 @@ function resetCart()
 {
     $_SESSION['cart'] = [];
 }
+
+
+// ------------------------------------------------------------------------------
+// FONCTIONS COMMANDE --------------------------------------
+
+function saveOrder()
+{
+    $db = getConnection();
+    $totalCommande = totalCommande();
+
+    $sqlQuery = "INSERT INTO commandes (id_client, numero, date_commande, prix) VALUES (:id_client, :numero, :date_commande, :prix)";
+    $insertNewOrder = $db->prepare($sqlQuery);
+    $insertNewOrder->execute([
+        'id_client' => $_SESSION['id'],
+        'numero' => random_int(10000, 99999),
+        'date_commande' => date('d-m-Y'),
+        'prix' => $totalCommande
+    ]);
+
+    $id = $db->lastInsertId();
+
+    $sqlQuery2 = 'INSERT INTO commandes_articles (id_commande, id_article, quantite) VALUES(:id_commande, :id_article, :quantite)';
+
+    foreach ($_SESSION['cart'] as $article) {
+
+        $insertArticle = $db->prepare($sqlQuery2);
+        $insertArticle->execute([
+            'id_commande' => $id,
+            'id_article' => $article['id'],
+            'quantite' => $article['quantite']
+        ]);
+    }
+}
